@@ -21,32 +21,42 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   //Call reponsitory: User
-  res.status(200).json({ message: "Login successfull" });
-  console.log(`Email: ${email}, Password: ${password}`);
-
+  try{
+    const loginUser = userRepository.login({email,password})
+     res.status(200).json({ message: 
+      "Login successfull",
+      data: loginUser
+     });
+  //console.log(`Email: ${email}, Password: ${password}`);
   res.send("Login successfully");
+  }catch(error){
+    res.status.json({message: error.toString()})
+  }
+ 
 };
 //18/9/2023
 const register = async (req, res) => {
-  try{
-    const errors = validationResult(req.body);
+  const errors = validationResult(req.body);
   if (!errors.isEmpty()) {
     return res.status(400).json({ error: errors.array() });
   }
-  }catch(error){
-
-  }
-  
-  //detrcutoring object
-  const { 
-    name,
-     email, 
-     password, 
-     phoneNumber, 
-     address 
+    const {
+      name,
+      email,
+      password,
+      phoneNumber,
+      address
     } = req.body;
-  userRepository.register({ name, email, password, phoneNumber, address })
-}
+    try {
+    const newUser = await userRepository.register({ name, email, password, phoneNumber, address });
+
+    // Rest of your controller logic
+
+    res.status(201).json({ message: newUser });
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+};
 
 export default {
   getAllUser,

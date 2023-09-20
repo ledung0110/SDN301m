@@ -1,7 +1,7 @@
 import express from "express";
 import { body, validationResult } from "express-validator";
 import { userController } from "../controller/index.js";
-
+import user from "../repositories/user.js";
 
 const userRouter = express.Router();
 //Activities => user object
@@ -12,13 +12,22 @@ userRouter.get("/:id", async (req, res) => {
   res.send("Get users by userId");
 });
 //18/9/2023
-userRouter.post("/register",
+userRouter.post(
+  "/register",
   body("email").isEmail().withMessage("Email Invalid format"),
   body("password")
     .isLength({ min: 8 })
     .withMessage("Password length must be greater than 5"),
-    userController.register
+  userController.register
 );
+//homework
+// userRouter.post("/update",
+//   body("email").isEmail().withMessage("Email Invalid format"),
+//   body("password")
+//     .isLength({ min: 8 })
+//     .withMessage("Password length must be greater than 5"),
+//     user.updateUser
+// );
 // userRouter.put('/login',async(req,res)=>{
 //     res.send("Login user")
 // })

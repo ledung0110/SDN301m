@@ -1,5 +1,6 @@
-import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
+import {User} from "../models/User.js";
+import  jwt  from "jsonwebtoken";
 const userRepository = {
   getUserById: async (userId) => {
     try {
@@ -11,21 +12,50 @@ const userRepository = {
     }
   },
 };
-const login = ({ email, password }) => {
-  console.log(`Email: ${email}, Password: ${password}`);
+const login = async({ email, password }) => {
+  const userExisting = await User.findOne({ email }).exec();
+  
+  if(userExisting){
+    const isMatch = bcrypt.compare(password,userExisting.password)
+    if(isMatch==true){
+    //Taoj access = token jwt
+    const accessToken= jwt.sign({
+     data: userExisting
+    },
+process.env.SECRET_KEY_JWT,
+{
+expiresIn: "2 day"
+}
+    )
+    return {
+      ...userExisting.toObject(),
+      password:'Not show',
+      token: accessToken
+   }
+  }else{
+    throw new Error('Email password incorrect')
+  }
+  }else{
+    throw new Error('User not exist')
+  }
+  //console.log(`Email: ${email}, Password: ${password}`);
 };
 
 const register = async ({ name, email, password, phoneNumber, address }) => {
   const userExisting = await User.findOne({ email }).exec();
+  console.log(userExisting);
   if (userExisting) {
-    throw new Error("User already exists");
+    throw new Error("Email đã tồn tại");
   }
-  //Mã hóa mật khẩu
-  const hashPassword = await bcrypt.hash(
-    password,
-    parseInt(process.env.SECRET_KEY)
-  );
-  // Create a new user
+
+  const secretKey = process.env.SECRET_KEY;
+
+  const passwordWithKey = password + secretKey;
+
+  const saltRounds = 10;
+  const salt = await bcrypt.genSalt(saltRounds);
+
+  const hashPassword = await bcrypt.hash(passwordWithKey, salt);
 
   const newUser = await User.create({
     name,
@@ -34,10 +64,12 @@ const register = async ({ name, email, password, phoneNumber, address }) => {
     phoneNumber,
     address,
   });
-  // Save the user to the database
 
-  // Optionally, you can return the newly created user object
-  return newUser;
+  // Tuỳ chọn, bạn có thể trả về đối tượng người dùng mới được tạo
+  return {
+    ...newUser._doc,
+    password: 'Not Show'
+  }
 };
 
 // const getAllUser = async () => {
@@ -60,5 +92,4 @@ const register = async ({ name, email, password, phoneNumber, address }) => {
 export default {
   login,
   register,
- 
 };

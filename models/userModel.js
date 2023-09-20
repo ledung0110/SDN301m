@@ -1,49 +1,35 @@
-// import { Schema } from "mongoose";
-
-// const userSchema= Schema
-// (
-//     {
-//         name:"Name 1",
-//         age: 20,
-//         email:"123@gmail.com",
-//         school:"FPT University"
+// import { Schema, model } from "mongoose"
+// import mongoose, { ObjectId } from "mongoose";
+// import validator from "validator/lib/isEmail.js";
+// //Define user schema
+// const userSchema = new Schema({
+//     id: { type: ObjectId },
+//     //model validation
+//     name: {
+//       type: String,
+//       require: true,
+//       validate: {
+//         validator:(value)=>value.length >3,
+//         message: "Length of name > 3"
+//       }
 //     },
-//     {
-//         name:"Name 2",
-//         age: 25,
-//         email:"12345@gmail.com",
-//         school:"FPT University"
+//     email: {
+//       type: String,
+//       require: true,
+//       validate: {
+//         validator:(value)=>value.isEmail(),
+//         message: "Incorrect format"
+//       }
 //     },
-//     {
-//         name:"Name 3",
-//         age: 20,
-//         email:"123@gmail.com",
-//         school:"FPT University"
-//     }
-    
-// )
-//     const user = model('user',userSchema)
-//     export default userSchema
-
-import { Schema, model } from "mongoose"
-
-//Define user schema
-const userSchema = Schema({
-    name: {
-        type: String,
-        required:[true,"Please enter name."]
-    },
-    class: {
-        type: String,
-        required: true,
-    },
-    age:{
-        type: Number,
-        required: true
-    },
-    
-},
-)
-// Create product model
-const User = model('User', userSchema)
-export default User
+//     phoneNumber: {
+//       type: String,
+//       reuqire: true,
+//     },
+//     address: {
+//       type: String,
+//       require: false,
+//     },
+//   })
+// // Create product model
+// const User = model('User', userSchema)
+// export default User

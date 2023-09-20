@@ -1,24 +1,22 @@
 import express from "express";
 import { connect } from "mongoose"; //2
-import * as dotenv from 'dotenv'
-import {userRouter, productRouter} from "./routes/index.js";
+import * as dotenv from "dotenv";
+import { userRouter, productRouter } from "./routes/index.js";
+import connectDB from "./database/database.js";
 // import { create } from "./models/productModel"; //2
-dotenv.config()
+dotenv.config();
 const app = express();
-app.use(express.json()) // COnfig cho express lam viec vs dlieu dang Json
+app.use(express.json()); // COnfig cho express lam viec vs dlieu dang Json
 
 //Routes: GET,POST,PUT (PATCH),
 app.get("/", (req, res) => {
   res.send("Welcome to Home RESTful API ");
 });
 
-app.use('/users',userRouter)
-app.use('/product',productRouter)
+app.use("/users", userRouter);
+app.use("/product", productRouter);
 
-const port = process.env.PORT || 8080
-app.listen(port,()=>{
-    console.log(`Server is running on Port ${port}`)
-})
+const port = process.env.PORT || 8080;
 
 // app.post("/products",async (req,res)=>{
 //     try {
@@ -55,9 +53,7 @@ app.listen(port,()=>{
 //Listen on port number: 9999
 
 //Connect to mongoDB
-// connect(
-//   "mongodb+srv://dunglthe161513:Conyeume123.@cluster0.qyqh7ya.mongodb.net/?retryWrites=true&w=majority"
-// )
+// connect(process.env.MONGO_URI)
 //   .then(() => {
 //     console.log("Connect to MongoDB successfully");
 //     app.listen(9999, () => {
@@ -67,3 +63,12 @@ app.listen(port,()=>{
 //   .catch((err) => {
 //     console.log(err.message);
 //   });
+app.listen(port, () => {
+  try{
+    connectDB();
+      console.log("Server is running at port 9999");
+  }catch(error){
+    console.log(error)
+  }
+  
+    });

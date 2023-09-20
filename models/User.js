@@ -1,32 +1,40 @@
-import mongoose, { ObjectId } from "mongoose";
-import validator from "validator/lib/isEmail.js";
-//18/9/2023
-const User = mongoose.model(
+import mongoose, { ObjectId, Schema } from "mongoose";
+import isEmail from "validator/lib/isEmail.js";
+
+export const User = mongoose.model(
   "User",
   new Schema({
     id: { type: ObjectId },
     //model validation
-    name: {
+    "name": {
       type: String,
       require: true,
       validate: {
-        validator:(value)=>value.length >3,
+        validator: (value) => value.length > 3,
         message: "Length of name > 3"
       }
     },
-    email: {
+    "email": {
       type: String,
       require: true,
       validate: {
-        validator:(value)=>value.isEmail(),
+        validator: (value) => isEmail,
         message: "Incorrect format"
       }
     },
-    phoneNumber: {
+    "password": {
+      type: String,
+      require: true,
+      validate: {
+        validator: (value) => value.length > 8,
+        message: "Length of name > 3"
+      }
+    },
+    "phoneNumber": {
       type: String,
       reuqire: true,
     },
-    address: {
+    "address": {
       type: String,
       require: false,
     },
