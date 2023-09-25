@@ -1,45 +1,38 @@
 import bcrypt from "bcrypt";
-import {User} from "../models/User.js";
-import  jwt  from "jsonwebtoken";
-const userRepository = {
-  getUserById: async (userId) => {
-    try {
-      const User = await User.findById(userId);
-      return User;
-    } catch (error) {
-      console.error(error);
-      throw new Error("Fail to get user by ID");
-    }
-  },
-};
-const login = async({ email, password }) => {
+import { User } from "../models/User.js";
+import jwt from "jsonwebtoken";
+
+//LOGIN
+const login = async ({ email, password }) => {
   const userExisting = await User.findOne({ email }).exec();
-  
-  if(userExisting){
-    const isMatch = bcrypt.compare(password,userExisting.password)
-    if(isMatch==true){
-    //Taoj access = token jwt
-    const accessToken= jwt.sign({
-     data: userExisting
-    },
-process.env.SECRET_KEY_JWT,
-{
-expiresIn: "2 day"
-}
-    )
-    return {
-      ...userExisting.toObject(),
-      password:'Not show',
-      token: accessToken
-   }
-  }else{
-    throw new Error('Email password incorrect')
-  }
-  }else{
-    throw new Error('User not exist')
+  if (userExisting) {
+    const isMatch = bcrypt.compare(password, userExisting.password);
+    if (isMatch == true) {
+      //Taoj access = token jwt
+      const accessToken = jwt.sign(
+        {
+          data: userExisting,
+        },
+        process.env.SECRET_KEY_JWT,
+        {
+          expiresIn: "2 day",
+        }
+      );
+      return {
+        ...userExisting.toObject(),
+        password: "Not show",
+        token: accessToken,
+      };
+    } else {
+      throw new Error("Email password incorrect");
+    }
+  } else {
+    throw new Error("User not exist");
   }
   //console.log(`Email: ${email}, Password: ${password}`);
 };
+
+//REGISTER
 
 const register = async ({ name, email, password, phoneNumber, address }) => {
   const userExisting = await User.findOne({ email }).exec();
@@ -64,32 +57,75 @@ const register = async ({ name, email, password, phoneNumber, address }) => {
     phoneNumber,
     address,
   });
-
-  // Tuỳ chọn, bạn có thể trả về đối tượng người dùng mới được tạo
   return {
     ...newUser._doc,
-    password: 'Not Show'
+    password: "Not Show",
+  };
+};
+
+//UPDATE
+
+const updateUser = async (id, updateFields) => {
+  try {
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: id },
+      updateFields,
+      { new: true } // To return the updated document
+    );
+
+    if (!updatedUser) {
+      return null; // User not found
+    }
+
+    return updatedUser;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Update user failed");
   }
 };
 
-// const getAllUser = async () => {
-//   try {
-//   } catch (error) {
-//     console.log();
-//   }
-// };
+//DELETE
 
-// const createUser = async (userData) => {
-//   try {
-//     const createdUser = await User.create(userData);
-//     return createdUser;
-//   } catch (error) {
-//     console.error(error);
-//     throw new Error("Failed to create a new user");
-//   }
-// };
+const deleteUser = async (id) => {
+  try {
+    const deletedUser = await User.findOneAndDelete({ _id: id });
+
+    if (!deletedUser) {
+      return null; // User not found
+    }
+
+    return deletedUser;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Delete user failed");
+  }
+};
+
+
+//GET ALL
+
+const getAllUsers = async () => {
+  try {
+    // Use Mongoose to retrieve all users
+    const users = await User.find({});
+
+    if (!users) {
+      return null; // No users found
+    }
+    return users;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Get all users failed");
+  }
+};
+const getById= async()=>{
+  
+}
 
 export default {
   login,
   register,
+  updateUser,
+  deleteUser,
+  getAllUsers,
 };

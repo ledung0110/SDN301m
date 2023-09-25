@@ -4,7 +4,7 @@ import isEmail from "validator/lib/isEmail.js";
 export const User = mongoose.model(
   "User",
   new Schema({
-    id: { type: ObjectId },
+  
     //model validation
     "name": {
       type: String,

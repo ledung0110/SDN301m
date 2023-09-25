@@ -1,7 +1,7 @@
 import express from "express";
 import { connect } from "mongoose"; //2
 import * as dotenv from "dotenv";
-import { userRouter, productRouter } from "./routes/index.js";
+import { userRouter, productRouter,studentRouter } from "./routes/index.js";
 import connectDB from "./database/database.js";
 // import { create } from "./models/productModel"; //2
 dotenv.config();
@@ -15,6 +15,7 @@ app.get("/", (req, res) => {
 
 app.use("/users", userRouter);
 app.use("/product", productRouter);
+app.use("/students", studentRouter);
 
 const port = process.env.PORT || 8080;
 
@@ -64,11 +65,10 @@ const port = process.env.PORT || 8080;
 //     console.log(err.message);
 //   });
 app.listen(port, () => {
-  try{
+  try {
     connectDB();
-      console.log("Server is running at port 9999");
-  }catch(error){
-    console.log(error)
+    console.log("Server is running at port 9999");
+  } catch (error) {
+    console.log(error);
   }
-  
-    });
+});

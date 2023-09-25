@@ -5,12 +5,8 @@ import user from "../repositories/user.js";
 
 const userRouter = express.Router();
 //Activities => user object
-userRouter.get("/", async (req, res) => {
-  res.send("Get all users");
-});
-userRouter.get("/:id", async (req, res) => {
-  res.send("Get users by userId");
-});
+
+
 //18/9/2023
 userRouter.post(
   "/register",
@@ -20,17 +16,7 @@ userRouter.post(
     .withMessage("Password length must be greater than 5"),
   userController.register
 );
-//homework
-// userRouter.post("/update",
-//   body("email").isEmail().withMessage("Email Invalid format"),
-//   body("password")
-//     .isLength({ min: 8 })
-//     .withMessage("Password length must be greater than 5"),
-//     user.updateUser
-// );
-// userRouter.put('/login',async(req,res)=>{
-//     res.send("Login user")
-// })
+
 userRouter.post(
   "/login",
   body("email").isEmail().withMessage("Email Invalid format"),
@@ -39,6 +25,22 @@ userRouter.post(
     .withMessage("Password length must be greater than 5"),
   userController.login
 );
+
+userRouter.put(
+  '/update/:id', // Include the user ID as a URL parameter
+
+  userController.updateUser
+);
+// routes/userRoutes.js
+
+userRouter.get('/all', userController.getAllUsers);
+
+// routes/userRoutes.js
+
+userRouter.delete('/delete/:id', userController.deleteUser);
+
+
+export default userRouter;
 
 //   async (req, res) => { //chuyen sang user(reponsitory)
 //     //debugger
@@ -50,8 +52,15 @@ userRouter.post(
 //     res.send("Login successfully");
 //   }
 
-userRouter.put("/edit", async (req, res) => {
-  res.send("Edit User");
-});
+//homework
+// userRouter.post("/update",
+//   body("email").isEmail().withMessage("Email Invalid format"),
+//   body("password")
+//     .isLength({ min: 8 })
+//     .withMessage("Password length must be greater than 5"),
+//     user.updateUser
+// );
+// userRouter.put('/login',async(req,res)=>{
+//     res.send("Login user")
+// })
 
-export default userRouter;
